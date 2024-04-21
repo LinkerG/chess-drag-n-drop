@@ -1,4 +1,5 @@
 let board;
+const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const place = new Audio('sounds/move-self.mp3');
 const capture = new Audio('sounds/capture.mp3');
 window.addEventListener("load", function(){
@@ -7,35 +8,45 @@ window.addEventListener("load", function(){
     draganddrop();
 });
 
-function draganddrop(){
+function draganddrop() {
     const cells = document.querySelectorAll('.cell');
-
-    let selectedPiece = null;
 
     cells.forEach(cell => {
         // Agrega evento de arrastrar para las fichas
-        cell.addEventListener('dragstart', function (event) {
+        cell.addEventListener('dragstart', function(event) {
             selectedPiece = event.target;
             checkPlacing(selectedPiece, selectedPiece.parentNode);
         });
 
         // Agrega evento de soltar para las casillas
-        cell.addEventListener('drop', function (event) {
+        cell.addEventListener('drop', function(event) {
             event.preventDefault();
-            if (event.target.classList.contains('available')) {
+            if (event.target.classList.contains('capture')) {
+                capture.play();
+                event.target.innerHTML = '';
+                event.target.appendChild(selectedPiece);
+            } else if (event.target.classList.contains('available')) {
                 place.play();
                 event.target.appendChild(selectedPiece);
-
             }
-            const available = document.querySelectorAll('.available');
-            available.forEach(element => {
-                element.classList.remove('available');
+
+            const cells = document.querySelectorAll('.available, .capture');
+            cells.forEach(cell => {
+                cell.classList.remove('available', 'capture');
             });
         });
 
         // Previene el comportamiento predeterminado de las casillas para permitir el soltar
-        cell.addEventListener('dragover', function (event) {
+        cell.addEventListener('dragover', function(event) {
             event.preventDefault();
+
+            if (event.target.classList.contains('capture')) {
+                event.dataTransfer.dropEffect = 'move'; // Cambiar el efecto del cursor al mover sobre una celda de captura
+            } else if (event.target.classList.contains('available')) {
+                event.dataTransfer.dropEffect = 'move'; // Cambiar el efecto del cursor al mover sobre una celda disponible
+            } else {
+                event.dataTransfer.dropEffect = 'none'; // No permitir el soltar en otras celdas
+            }
         });
     });
 }
@@ -59,8 +70,9 @@ function checkPlacing(selectedPiece, startingPoint){
             } else if (row != 7 && color == "black") {
                 availableMoves.push(col + (parseInt(row)-1))
             }
-            availableMoves = checkPawnCaptures(row, col, color, availableMoves);
+            let captureMoves = checkPawnCaptures(row, col, color, availableMoves);
             colorAvailableMoves(availableMoves);
+            colorCaptureMoves(captureMoves);
             break;
         case "rook":
             break;
@@ -73,20 +85,52 @@ function checkPlacing(selectedPiece, startingPoint){
         case "king":
             break;
     }
-    console.log(availableMoves);
 }
 
 function checkPawnCaptures(row, col, color, availableMoves) {
-    
+    let captureMoves = [];
+    row = parseInt(row);
 
-    return availableMoves;
+    if (col !== "A") {
+        const leftCol = String.fromCharCode(col.charCodeAt(0) - 1);
+        const targetCell = leftCol + (color === "white" ? row + 1 : row - 1);
+        if (hasOpponentPiece(targetCell, color)) {
+            captureMoves.push(targetCell);
+        }
+    }
+
+    if (col !== "H") {
+        const rightCol = String.fromCharCode(col.charCodeAt(0) + 1);
+        const targetCell = rightCol + (color === "white" ? row + 1 : row - 1);
+        if (hasOpponentPiece(targetCell, color)) {
+            captureMoves.push(targetCell);
+        }
+    }
+
+    return captureMoves;
 }
+
+function hasOpponentPiece(cell, color) {
+    const targetCell = document.querySelector(`[data-coordinates="${cell}"]`);
+    if (targetCell) {
+        const piece = targetCell.querySelector(`.chessPiece.${color === "white" ? "black" : "white"}`);
+        return piece !== null;
+    }
+    return false;
+}
+
 
 function colorAvailableMoves(availableMoves){
     availableMoves.forEach(cell => {
         let cellToColor = board.querySelector("[data-coordinates=" + cell + "]")
-        console.log(cellToColor);
         cellToColor.classList.add("available")
+    })
+}
+
+function colorCaptureMoves(captureMoves){
+    captureMoves.forEach(cell => {
+        let cellToColor = board.querySelector("[data-coordinates=" + cell + "]")
+        cellToColor.classList.add("capture")
     })
 }
 

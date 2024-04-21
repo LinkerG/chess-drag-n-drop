@@ -1,7 +1,11 @@
-#board {
+body{
     display: flex;
     flex-direction: column;
     align-items: center; /* Centra el tablero horizontalmente */
+}
+
+#board {
+    border: 1rem solid rgb(165, 116, 42);
 }
 
 .row {
@@ -9,7 +13,6 @@
 }
 
 .cell {
-    border: 1px solid black;
     min-height: 6rem;
     max-height: 6rem;
     min-width: 6rem;
@@ -19,6 +22,7 @@
     position: relative;
     justify-content: center; /* Centra el contenido de la celda verticalmente */
     align-items: center; /* Centra el contenido de la celda horizontalmente */
+    transition: background-color 0.2s ease;
 }
 
 .chessPiece{
@@ -46,4 +50,14 @@
 
 .cell.available{
     background-color: lightgreen!important; 
+    -webkit-box-shadow: inset 0px 0px 39px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: inset 0px 0px 39px -8px rgba(0,0,0,0.75);
+    box-shadow: inset 0px 0px 39px -8px rgba(0,0,0,0.75);
+}
+
+.cell.capture{
+    background-color: rgb(255, 97, 97)!important; 
+    -webkit-box-shadow: inset 0px 0px 39px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: inset 0px 0px 39px -8px rgba(0,0,0,0.75);
+    box-shadow: inset 0px 0px 39px -8px rgba(0,0,0,0.75);
 }

@@ -1,0 +1,45 @@
+#board {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el tablero horizontalmente */
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    border: 1px solid black;
+    min-height: 6rem;
+    max-height: 6rem;
+    min-width: 6rem;
+    max-width: 6rem;
+    user-select: none;
+    display: flex;
+    position: relative;
+    justify-content: center; /* Centra el contenido de la celda verticalmente */
+    align-items: center; /* Centra el contenido de la celda horizontalmente */
+}
+
+.chessPiece{
+    cursor: move;
+    z-index: 100;
+    filter: drop-shadow(0 0 0.75rem white);
+}
+
+.cell::before {
+    content: attr(data-coordinates);
+    padding: 0.3em;
+    color: gray;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.row:nth-child(even) .cell:nth-child(odd){
+    background-color: black;
+}
+
+.row:nth-child(odd) .cell:nth-child(even){
+    background-color: black;
+}

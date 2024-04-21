@@ -43,3 +43,7 @@
 .row:nth-child(odd) .cell:nth-child(even){
     background-color: black;
 }
+
+.cell.available{
+    background-color: lightgreen!important; 
+}

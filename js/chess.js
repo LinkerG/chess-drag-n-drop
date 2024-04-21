@@ -16,16 +16,21 @@ function draganddrop(){
         // Agrega evento de arrastrar para las fichas
         cell.addEventListener('dragstart', function (event) {
             selectedPiece = event.target;
-            colorAvailablePlacing(selectedPiece, selectedPiece.parentNode);
+            checkPlacing(selectedPiece, selectedPiece.parentNode);
         });
 
         // Agrega evento de soltar para las casillas
         cell.addEventListener('drop', function (event) {
             event.preventDefault();
-            if (event.target.classList.contains('cell')) {
+            if (event.target.classList.contains('available')) {
                 place.play();
                 event.target.appendChild(selectedPiece);
+
             }
+            const available = document.querySelectorAll('.available');
+            available.forEach(element => {
+                element.classList.remove('available');
+            });
         });
 
         // Previene el comportamiento predeterminado de las casillas para permitir el soltar
@@ -35,7 +40,7 @@ function draganddrop(){
     });
 }
 
-function colorAvailablePlacing(selectedPiece, startingPoint){
+function checkPlacing(selectedPiece, startingPoint){
     const clases = selectedPiece.classList;
     let [col, row] = startingPoint.dataset.coordinates.split("");
     const type = clases[1]
@@ -54,7 +59,8 @@ function colorAvailablePlacing(selectedPiece, startingPoint){
             } else if (row != 7 && color == "black") {
                 availableMoves.push(col + (parseInt(row)-1))
             }
-            pawnCheckCaptures(startingPoint);
+            availableMoves = checkPawnCaptures(row, col, color, availableMoves);
+            colorAvailableMoves(availableMoves);
             break;
         case "rook":
             break;
@@ -68,6 +74,20 @@ function colorAvailablePlacing(selectedPiece, startingPoint){
             break;
     }
     console.log(availableMoves);
+}
+
+function checkPawnCaptures(row, col, color, availableMoves) {
+    
+
+    return availableMoves;
+}
+
+function colorAvailableMoves(availableMoves){
+    availableMoves.forEach(cell => {
+        let cellToColor = board.querySelector("[data-coordinates=" + cell + "]")
+        console.log(cellToColor);
+        cellToColor.classList.add("available")
+    })
 }
 
 function initChessGame() {
